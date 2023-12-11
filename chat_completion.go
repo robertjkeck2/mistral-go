@@ -78,5 +78,6 @@ func (mc *MistralClient) CreateChatCompletion(ctx context.Context, body ChatComp
 }
 
 func (mc *MistralClient) CreateChatCompletionStream(ctx context.Context, body ChatCompletionRequest) (resp ChatCompletionStreamResponse, err error) {
+	// TODO: implement streaming request and response handling
 	return resp, nil
 }
