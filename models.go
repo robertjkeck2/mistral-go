@@ -29,3 +29,7 @@ type ModelList struct {
 	Object string      `json:"object"`
 	Data   []ModelCard `json:"data"`
 }
+
+func (mc *MistralClient) ListModels() (resp *ModelList, err error) {
+	return resp, err
+}

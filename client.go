@@ -1,12 +1,12 @@
 package mistral
 
-// Client is the Mistral API client
-type Client struct {
+// MistralClient is the Mistral API client
+type MistralClient struct {
 	config ClientConfig
 }
 
-// NewClient creates a new Mistral API client
-func NewClient(apiKey string) *Client {
+// NewMistralClient creates a new Mistral API client
+func NewMistralClient(apiKey string) *MistralClient {
 	config := DefaultConfig(apiKey)
-	return &Client{config: config}
+	return &MistralClient{config: config}
 }

@@ -1,5 +1,7 @@
 package mistral
 
+import "context"
+
 type FinishReason int
 
 const (
@@ -19,6 +21,17 @@ type ChatMessage struct {
 type DeltaMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
+}
+
+type ChatCompletionRequest struct {
+	Model       string        `json:"model"`
+	Messages    []ChatMessage `json:"messages"`
+	Temperature *float64      `json:"temperature"`
+	MaxTokens   *int          `json:"max_tokens"`
+	TopP        *float64      `json:"top_p"`
+	RandomSeed  *int          `json:"random_seed"`
+	Stream      *bool         `json:"stream"`
+	SafeMode    *bool         `json:"safe_mode"`
 }
 
 type ChatCompletionResponseStreamChoice struct {
@@ -49,4 +62,12 @@ type ChatCompletionResponse struct {
 	Created int64                          `json:"created"`
 	Object  string                         `json:"object"`
 	Usage   UsageInfo                      `json:"usage"`
+}
+
+func (mc *MistralClient) CreateChatCompletion(ctx context.Context, req ChatCompletionRequest) (resp ChatCompletionResponse, err error) {
+	return resp, nil
+}
+
+func (mc *MistralClient) CreateChatCompletionStream(ctx context.Context, req ChatCompletionRequest) (resp ChatCompletionStreamResponse, err error) {
+	return resp, nil
 }
