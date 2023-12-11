@@ -28,7 +28,7 @@ func isFailureStatusCode(resp *http.Response) bool {
 }
 
 func (mc *MistralClient) endpoint(path string) string {
-	return mc.config.BaseURL + path
+	return mc.config.BaseURL + "/" + mc.config.Version + path
 }
 
 func (mc *MistralClient) newRequest(ctx context.Context, method, url string, body any) (*http.Request, error) {
