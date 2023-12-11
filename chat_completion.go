@@ -1,6 +1,9 @@
 package mistral
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 type FinishReason int
 
@@ -64,10 +67,17 @@ type ChatCompletionResponse struct {
 	Usage   UsageInfo                      `json:"usage"`
 }
 
-func (mc *MistralClient) CreateChatCompletion(ctx context.Context, req ChatCompletionRequest) (resp ChatCompletionResponse, err error) {
-	return resp, nil
+func (mc *MistralClient) CreateChatCompletion(ctx context.Context, body ChatCompletionRequest) (resp ChatCompletionResponse, err error) {
+	req, err := mc.newRequest(ctx, http.MethodPost, mc.endpoint("/chat/completions"), body)
+	if err != nil {
+		return
+	}
+
+	err = mc.sendRequest(req, &resp)
+	return
 }
 
-func (mc *MistralClient) CreateChatCompletionStream(ctx context.Context, req ChatCompletionRequest) (resp ChatCompletionStreamResponse, err error) {
+func (mc *MistralClient) CreateChatCompletionStream(ctx context.Context, body ChatCompletionRequest) (resp ChatCompletionStreamResponse, err error) {
+	// TODO: implement streaming request and response handling
 	return resp, nil
 }

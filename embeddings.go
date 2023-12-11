@@ -1,6 +1,9 @@
 package mistral
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 type EmbeddingObject struct {
 	Object    string    `json:"object"`
@@ -21,6 +24,12 @@ type EmbeddingResponse struct {
 	Usage  UsageInfo         `json:"usage"`
 }
 
-func (mc *MistralClient) CreateEmbedding(ctx context.Context, req *EmbeddingRequest) (resp *EmbeddingResponse, err error) {
-	return resp, err
+func (mc *MistralClient) CreateEmbedding(ctx context.Context, body *EmbeddingRequest) (resp *EmbeddingResponse, err error) {
+	req, err := mc.newRequest(ctx, http.MethodPost, mc.endpoint("/embeddings"), body)
+	if err != nil {
+		return
+	}
+
+	err = mc.sendRequest(req, &resp)
+	return
 }

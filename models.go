@@ -1,5 +1,10 @@
 package mistral
 
+import (
+	"context"
+	"net/http"
+)
+
 type ModelPermission struct {
 	ID                 string  `json:"id"`
 	Object             string  `json:"object"`
@@ -30,6 +35,12 @@ type ModelList struct {
 	Data   []ModelCard `json:"data"`
 }
 
-func (mc *MistralClient) ListModels() (resp *ModelList, err error) {
-	return resp, err
+func (mc *MistralClient) ListModels(ctx context.Context) (resp *ModelList, err error) {
+	req, err := mc.newRequest(ctx, http.MethodGet, mc.endpoint("/models"), nil)
+	if err != nil {
+		return
+	}
+
+	err = mc.sendRequest(req, &resp)
+	return
 }
