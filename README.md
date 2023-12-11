@@ -1,2 +1,3 @@
-# go-mistral
-Golang client library for Mistral AI platform
+# Mistral Go Client
+
+Unofficial Golang client library for Mistral AI platform
