@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -98,5 +99,15 @@ func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) er
 }
 
 func (mc *MistralClient) handleErrorResp(resp *http.Response) error {
-	return nil
+	var (
+		errResp    ErrorResponse
+		errMessage ErrorMessage
+	)
+	if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+		return err
+	}
+	if err := json.Unmarshal([]byte(errResp.Message), &errMessage); err != nil {
+		return err
+	}
+	return fmt.Errorf("error code %s: %s", errResp.Code, errMessage.Detail[0].Msg)
 }
