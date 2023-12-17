@@ -35,13 +35,13 @@ func (mc *MistralClient) newRequest(ctx context.Context, method, url string, bod
 	var bodyReader io.Reader
 	if body != nil {
 		if reader, ok := body.(io.Reader); ok {
-			body = reader
+			bodyReader = reader
 		} else {
 			bodyBytes, err := json.Marshal(body)
 			if err != nil {
 				return nil, err
 			}
-			body = bytes.NewReader(bodyBytes)
+			bodyReader = bytes.NewReader(bodyBytes)
 		}
 	}
 
@@ -58,11 +58,15 @@ func (mc *MistralClient) newRequest(ctx context.Context, method, url string, bod
 }
 
 func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) error {
-	retries := mc.config.MaxRetries
-	resp := &http.Response{}
+	var (
+		retries int
+		err     error
+		resp    *http.Response
+	)
 
+	retries = mc.config.MaxRetries
 	for retries > 0 {
-		resp, err := mc.config.HTTPClient.Do(req)
+		resp, err = mc.config.HTTPClient.Do(req)
 		if err != nil {
 			return err
 		}
@@ -80,7 +84,7 @@ func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) er
 	defer resp.Body.Close()
 
 	if respBody != nil {
-		if err := json.NewDecoder(resp.Body).Decode(respBody); err != nil {
+		if err = json.NewDecoder(resp.Body).Decode(respBody); err != nil {
 			return err
 		}
 	}

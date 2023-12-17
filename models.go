@@ -16,7 +16,7 @@ type ModelPermission struct {
 	AllowView          bool    `json:"allow_view"`
 	AllowFineTuning    bool    `json:"allow_fine_tuning"`
 	Organization       string  `json:"organization"`
-	Group              *string `json:"group"`
+	Group              *string `json:"group,omitempty"`
 	IsBlocking         bool    `json:"is_blocking"`
 }
 
