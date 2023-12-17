@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"time"
 )
 
 // MistralClient is the Mistral API client
@@ -60,11 +61,13 @@ func (mc *MistralClient) newRequest(ctx context.Context, method, url string, bod
 func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) error {
 	var (
 		retries int
+		delay   time.Duration
 		err     error
 		resp    *http.Response
 	)
 
 	retries = mc.config.MaxRetries
+	delay = 1 * time.Second
 	for retries > 0 {
 		resp, err = mc.config.HTTPClient.Do(req)
 		if err != nil {
@@ -73,6 +76,8 @@ func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) er
 
 		if isRetryStatusCode(resp) {
 			retries--
+			time.Sleep(delay)
+			delay *= 2
 			continue
 		} else if isFailureStatusCode(resp) {
 			return mc.handleErrorResp(resp)
