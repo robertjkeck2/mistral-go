@@ -58,20 +58,26 @@ func (mc *MistralClient) newRequest(ctx context.Context, method, url string, bod
 }
 
 func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) error {
-	resp, err := mc.config.HTTPClient.Do(req)
-	if err != nil {
-		return err
+	retries := mc.config.MaxRetries
+	resp := &http.Response{}
+
+	for retries > 0 {
+		resp, err := mc.config.HTTPClient.Do(req)
+		if err != nil {
+			return err
+		}
+
+		if isRetryStatusCode(resp) {
+			retries--
+			continue
+		} else if isFailureStatusCode(resp) {
+			return mc.handleErrorResp(resp)
+		} else {
+			break
+		}
 	}
 
 	defer resp.Body.Close()
-
-	if isRetryStatusCode(resp) {
-		return mc.handleRetryResp(resp)
-	}
-
-	if isFailureStatusCode(resp) {
-		return mc.handleErrorResp(resp)
-	}
 
 	if respBody != nil {
 		if err := json.NewDecoder(resp.Body).Decode(respBody); err != nil {
@@ -79,10 +85,6 @@ func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) er
 		}
 	}
 
-	return nil
-}
-
-func (mc *MistralClient) handleRetryResp(resp *http.Response) error {
 	return nil
 }
 
