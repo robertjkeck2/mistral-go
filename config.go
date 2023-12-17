@@ -25,18 +25,16 @@ type ClientConfig struct {
 
 	// MaxRetries is the maximum number of retries for a request
 	MaxRetries int
-
-	// Timeout is the timeout for a request
-	Timeout time.Duration
 }
 
 func DefaultConfig(apiKey string) ClientConfig {
 	return ClientConfig{
-		ApiKey:     apiKey,
-		BaseURL:    DefaultMistralURL,
-		Version:    "v1",
-		HTTPClient: http.DefaultClient,
+		ApiKey:  apiKey,
+		BaseURL: DefaultMistralURL,
+		Version: "v1",
+		HTTPClient: &http.Client{
+			Timeout: 120 * time.Second,
+		},
 		MaxRetries: 5,
-		Timeout:    120 * time.Second,
 	}
 }
