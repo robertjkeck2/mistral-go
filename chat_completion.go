@@ -18,12 +18,12 @@ type DeltaMessage struct {
 type ChatCompletionRequest struct {
 	Model       string        `json:"model"`
 	Messages    []ChatMessage `json:"messages"`
-	Temperature *float64      `json:"temperature,omitempty"`
-	MaxTokens   *int          `json:"max_tokens,omitempty"`
-	TopP        *float64      `json:"top_p,omitempty"`
-	RandomSeed  *int          `json:"random_seed,omitempty"`
-	Stream      *bool         `json:"stream,omitempty"`
-	SafeMode    *bool         `json:"safe_mode,omitempty"`
+	Temperature float64       `json:"temperature,omitempty"`
+	MaxTokens   int           `json:"max_tokens,omitempty"`
+	TopP        float64       `json:"top_p,omitempty"`
+	RandomSeed  int           `json:"random_seed,omitempty"`
+	Stream      bool          `json:"stream,omitempty"`
+	SafeMode    bool          `json:"safe_mode,omitempty"`
 }
 
 type ChatCompletionResponseStreamChoice struct {
@@ -39,6 +39,10 @@ type ChatCompletionStreamResponse struct {
 	Created *int64                               `json:"created,omitempty"`
 	Object  *string                              `json:"object,omitempty"`
 	Usage   *UsageInfo                           `json:"usage,omitempty"`
+}
+
+type ChatCompletionStream struct {
+	*streamReader[ChatCompletionStreamResponse]
 }
 
 type ChatCompletionResponseChoice struct {
@@ -57,6 +61,8 @@ type ChatCompletionResponse struct {
 }
 
 func (mc *MistralClient) CreateChatCompletion(ctx context.Context, body ChatCompletionRequest) (resp ChatCompletionResponse, err error) {
+	body.Stream = false
+
 	req, err := mc.newRequest(ctx, http.MethodPost, mc.endpoint("/chat/completions"), body)
 	if err != nil {
 		return
@@ -66,7 +72,19 @@ func (mc *MistralClient) CreateChatCompletion(ctx context.Context, body ChatComp
 	return
 }
 
-func (mc *MistralClient) CreateChatCompletionStream(ctx context.Context, body ChatCompletionRequest) (resp ChatCompletionStreamResponse, err error) {
-	// TODO: implement streaming request and response handling
-	return resp, nil
+func (mc *MistralClient) CreateChatCompletionStream(ctx context.Context, body ChatCompletionRequest) (stream *ChatCompletionStream, err error) {
+	body.Stream = true
+
+	req, err := mc.newRequest(ctx, http.MethodPost, mc.endpoint("/chat/completions"), body)
+	if err != nil {
+		return
+	}
+
+	resp, err := sendRequestStream[ChatCompletionStreamResponse](mc, req)
+	if err != nil {
+		return
+	}
+
+	stream = &ChatCompletionStream{streamReader: resp}
+	return
 }

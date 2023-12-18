@@ -1,6 +1,7 @@
 package mistral
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -98,16 +99,65 @@ func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) er
 	return nil
 }
 
+func sendRequestStream[T streamable](client *MistralClient, req *http.Request) (*streamReader[T], error) {
+	var (
+		retries int
+		delay   time.Duration
+		err     error
+		resp    *http.Response
+	)
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "text/event-stream")
+	req.Header.Set("Cache-Control", "no-cache")
+	req.Header.Set("Connection", "keep-alive")
+
+	retries = client.config.MaxRetries
+	delay = 1 * time.Second
+	for retries > 0 {
+		resp, err = client.config.HTTPClient.Do(req)
+		if err != nil {
+			return new(streamReader[T]), err
+		}
+
+		if isRetryStatusCode(resp) {
+			retries--
+			time.Sleep(delay)
+			delay *= 2
+			continue
+		} else if isFailureStatusCode(resp) {
+			return new(streamReader[T]), client.handleErrorResp(resp)
+		} else {
+			break
+		}
+	}
+
+	return &streamReader[T]{
+		reader:   bufio.NewReader(resp.Body),
+		response: resp,
+	}, nil
+}
+
 func (mc *MistralClient) handleErrorResp(resp *http.Response) error {
 	var (
+		errString  string
 		errResp    ErrorResponse
 		errMessage ErrorMessage
 	)
+
+	errorBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		errString = "error - message: failed to read error response body"
+	}
+	errString = string(errorBytes)
+
 	if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
-		return err
+		return fmt.Errorf("error - message: %s", errString)
 	}
+
 	if err := json.Unmarshal([]byte(errResp.Message), &errMessage); err != nil {
-		return fmt.Errorf("error code %s: %s", errResp.Code, errResp.Message)
+		return fmt.Errorf("error - code: %s, message: %s", errResp.Code, errResp.Message)
 	}
-	return fmt.Errorf("error code %s: %s", errResp.Code, errMessage.Detail[0].Msg)
+
+	return fmt.Errorf("error - code: %s, message: %s", errResp.Code, errMessage.Detail[0].Msg)
 }
