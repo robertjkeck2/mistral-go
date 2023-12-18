@@ -1,7 +1,8 @@
 # Mistral Go Client
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/robertjkeck2/mistral-go.svg)](https://pkg.go.dev/github.com/robertjkeck2/mistral-go)
-[![Go Report Card](https://goreportcard.com/report/github.com/robertjkeck2/go-mistral)](https://goreportcard.com/report/github.com/robertjkeck2/go-mistral)
+[![Go Report Card](https://goreportcard.com/badge/github.com/robertjkeck2/go-mistral)](https://goreportcard.com/report/github.com/robertjkeck2/go-mistral)
+[![codecov](https://codecov.io/gh/robertjkeck2/mistral-go/branch/master/graph/badge.svg?token=)](https://codecov.io/gh/robertjkeck2/mistral-go)
 
 Unofficial Golang client library for Mistral AI platform
 
