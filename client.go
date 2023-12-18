@@ -107,7 +107,7 @@ func (mc *MistralClient) handleErrorResp(resp *http.Response) error {
 		return err
 	}
 	if err := json.Unmarshal([]byte(errResp.Message), &errMessage); err != nil {
-		return err
+		return fmt.Errorf("error code %s: %s", errResp.Code, errResp.Message)
 	}
 	return fmt.Errorf("error code %s: %s", errResp.Code, errMessage.Detail[0].Msg)
 }
