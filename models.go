@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// ModelPermission represents the permissions for a Mistral model.
 type ModelPermission struct {
 	ID                 string  `json:"id"`
 	Object             string  `json:"object"`
@@ -20,6 +21,7 @@ type ModelPermission struct {
 	IsBlocking         bool    `json:"is_blocking"`
 }
 
+// ModelCard represents a Mistral model.
 type ModelCard struct {
 	ID         string            `json:"id"`
 	Object     string            `json:"object"`
@@ -30,6 +32,7 @@ type ModelCard struct {
 	Permission []ModelPermission `json:"permission"`
 }
 
+// ModelList represents the list of available Mistral models.
 type ModelList struct {
 	Object string      `json:"object"`
 	Data   []ModelCard `json:"data"`

@@ -12,7 +12,7 @@ func main() {
 	client := mistral.NewMistralClient(os.Getenv("MISTRAL_API_KEY"))
 	resp, err := client.CreateEmbedding(
 		context.Background(),
-		&mistral.EmbeddingRequest{
+		mistral.EmbeddingRequest{
 			Model: "mistral-embed",
 			Input: []string{"What is the best French cheese?"},
 		},

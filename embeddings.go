@@ -2,9 +2,11 @@ package mistral
 
 import (
 	"context"
+	"errors"
 	"net/http"
 )
 
+// EmbeddingObject represents a single Mistral embedding.
 type EmbeddingObject struct {
 	Object    string    `json:"object"`
 	Embedding []float64 `json:"embedding"`
@@ -24,7 +26,12 @@ type EmbeddingResponse struct {
 	Usage  UsageInfo         `json:"usage"`
 }
 
-func (mc *MistralClient) CreateEmbedding(ctx context.Context, body *EmbeddingRequest) (resp *EmbeddingResponse, err error) {
+func (mc *MistralClient) CreateEmbedding(ctx context.Context, body EmbeddingRequest) (resp *EmbeddingResponse, err error) {
+	if body.Model != "mistral-embed" {
+		err = errors.New("error - message: invalid model, must be \"mistral-embed\"")
+		return
+	}
+
 	req, err := mc.newRequest(ctx, http.MethodPost, mc.endpoint("/embeddings"), body)
 	if err != nil {
 		return
