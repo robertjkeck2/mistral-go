@@ -11,12 +11,6 @@ type ChatMessage struct {
 	Content string `json:"content"`
 }
 
-// DeltaMessage represents a delta message in a Mistral chat completion stream.
-type DeltaMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
 type ChatCompletionRequest struct {
 	Model       string        `json:"model"`
 	Messages    []ChatMessage `json:"messages"`
@@ -30,9 +24,9 @@ type ChatCompletionRequest struct {
 
 // ChatCompletionResponseChoice represents a choice in a Mistral chat completion.
 type ChatCompletionResponseStreamChoice struct {
-	Index        int          `json:"index"`
-	Delta        DeltaMessage `json:"delta"`
-	FinishReason *string      `json:"finish_reason,omitempty"`
+	Index        int         `json:"index"`
+	Delta        ChatMessage `json:"delta"`
+	FinishReason *string     `json:"finish_reason,omitempty"`
 }
 
 type ChatCompletionStreamResponse struct {
