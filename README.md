@@ -175,3 +175,11 @@ func main() {
 ### Mistral API documentation
 
 https://docs.mistral.ai/api
+
+### Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+
+### License
+
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
