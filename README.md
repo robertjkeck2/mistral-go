@@ -1,5 +1,8 @@
 # Mistral Go Client
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/robertjkeck2/mistral-go.svg)](https://pkg.go.dev/github.com/robertjkeck2/mistral-go)
+[![Go Report Card](https://goreportcard.com/report/github.com/robertjkeck2/go-mistral)](https://goreportcard.com/report/github.com/robertjkeck2/go-mistral)
+
 Unofficial Golang client library for Mistral AI platform
 
 ## Installation
@@ -121,7 +124,7 @@ func main() {
 	client := mistral.NewMistralClient(os.Getenv("MISTRAL_API_KEY"))
 	resp, err := client.CreateEmbedding(
 		context.Background(),
-		&mistral.EmbeddingRequest{
+		mistral.EmbeddingRequest{
 			Model: "mistral-embed",
 			Input: []string{"What is the best French cheese?"},
 		},
