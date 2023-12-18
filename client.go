@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 // MistralClient is the Mistral API client
@@ -35,13 +37,13 @@ func (mc *MistralClient) newRequest(ctx context.Context, method, url string, bod
 	var bodyReader io.Reader
 	if body != nil {
 		if reader, ok := body.(io.Reader); ok {
-			body = reader
+			bodyReader = reader
 		} else {
 			bodyBytes, err := json.Marshal(body)
 			if err != nil {
 				return nil, err
 			}
-			body = bytes.NewReader(bodyBytes)
+			bodyReader = bytes.NewReader(bodyBytes)
 		}
 	}
 
@@ -58,23 +60,37 @@ func (mc *MistralClient) newRequest(ctx context.Context, method, url string, bod
 }
 
 func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) error {
-	resp, err := mc.config.HTTPClient.Do(req)
-	if err != nil {
-		return err
+	var (
+		retries int
+		delay   time.Duration
+		err     error
+		resp    *http.Response
+	)
+
+	retries = mc.config.MaxRetries
+	delay = 1 * time.Second
+	for retries > 0 {
+		resp, err = mc.config.HTTPClient.Do(req)
+		if err != nil {
+			return err
+		}
+
+		if isRetryStatusCode(resp) {
+			retries--
+			time.Sleep(delay)
+			delay *= 2
+			continue
+		} else if isFailureStatusCode(resp) {
+			return mc.handleErrorResp(resp)
+		} else {
+			break
+		}
 	}
 
 	defer resp.Body.Close()
 
-	if isRetryStatusCode(resp) {
-		return mc.handleRetryResp(resp)
-	}
-
-	if isFailureStatusCode(resp) {
-		return mc.handleErrorResp(resp)
-	}
-
 	if respBody != nil {
-		if err := json.NewDecoder(resp.Body).Decode(respBody); err != nil {
+		if err = json.NewDecoder(resp.Body).Decode(respBody); err != nil {
 			return err
 		}
 	}
@@ -82,10 +98,16 @@ func (mc *MistralClient) sendRequest(req *http.Request, respBody interface{}) er
 	return nil
 }
 
-func (mc *MistralClient) handleRetryResp(resp *http.Response) error {
-	return nil
-}
-
 func (mc *MistralClient) handleErrorResp(resp *http.Response) error {
-	return nil
+	var (
+		errResp    ErrorResponse
+		errMessage ErrorMessage
+	)
+	if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+		return err
+	}
+	if err := json.Unmarshal([]byte(errResp.Message), &errMessage); err != nil {
+		return err
+	}
+	return fmt.Errorf("error code %s: %s", errResp.Code, errMessage.Detail[0].Msg)
 }
