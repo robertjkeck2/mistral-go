@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// EmbeddingObject represents a single Mistral embedding.
 type EmbeddingObject struct {
 	Object    string    `json:"object"`
 	Embedding []float64 `json:"embedding"`

@@ -5,11 +5,13 @@ import (
 	"net/http"
 )
 
+// ChatMessage represents a message in a Mistral chat completion.
 type ChatMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
+// DeltaMessage represents a delta message in a Mistral chat completion stream.
 type DeltaMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
@@ -26,6 +28,7 @@ type ChatCompletionRequest struct {
 	SafeMode    bool          `json:"safe_mode,omitempty"`
 }
 
+// ChatCompletionResponseChoice represents a choice in a Mistral chat completion.
 type ChatCompletionResponseStreamChoice struct {
 	Index        int          `json:"index"`
 	Delta        DeltaMessage `json:"delta"`
@@ -41,6 +44,7 @@ type ChatCompletionStreamResponse struct {
 	Usage   *UsageInfo                           `json:"usage,omitempty"`
 }
 
+// ChatCompletionStream represents a Mistral chat completion stream.
 type ChatCompletionStream struct {
 	*streamReader[ChatCompletionStreamResponse]
 }
