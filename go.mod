@@ -1,4 +1,4 @@
-module github.com/robertjkeck2/go-mistral
+module github.com/robertjkeck2/mistral-go
 
 go 1.21.4
 

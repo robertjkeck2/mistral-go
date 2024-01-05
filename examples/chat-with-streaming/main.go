@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/robertjkeck2/go-mistral"
+	"github.com/robertjkeck2/mistral-go"
 )
 
 func main() {
