@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/robertjkeck2/go-mistral"
+	"github.com/robertjkeck2/mistral-go"
 )
 
 var (
