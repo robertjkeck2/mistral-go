@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/joho/godotenv"
-	"github.com/robertjkeck2/go-mistral"
+	"github.com/robertjkeck2/mistral-go"
 	"github.com/stretchr/testify/assert"
 )
 
