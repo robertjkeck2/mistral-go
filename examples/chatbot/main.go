@@ -136,7 +136,7 @@ func (c *ChatBot) GetInput() string {
 }
 
 func (c *ChatBot) SendMessage(message string) {
-	c.Messages = append(c.Messages, mistral.ChatMessage{Role: "user", Content: message})
+	c.Messages = append(c.Messages, mistral.ChatMessage{Role: mistral.RoleUser, Content: message})
 	chatCompletionRequest := mistral.ChatCompletionRequest{
 		Model:       c.Model,
 		Messages:    c.Messages,
@@ -168,7 +168,7 @@ func (c *ChatBot) SendMessage(message string) {
 		assistantMessage = append(assistantMessage, response.Choices[0].Delta.Content)
 	}
 
-	c.Messages = append(c.Messages, mistral.ChatMessage{Role: "assistant", Content: strings.Join(assistantMessage, "")})
+	c.Messages = append(c.Messages, mistral.ChatMessage{Role: mistral.RoleAssistant, Content: strings.Join(assistantMessage, "")})
 	fmt.Println("")
 	fmt.Println("")
 }
@@ -226,7 +226,7 @@ func main() {
 	chatbot := ChatBot{
 		Client:    *mistral.NewMistralClient(os.Getenv("MISTRAL_API_KEY")),
 		Model:     *model,
-		SystemMsg: mistral.ChatMessage{Role: "system", Content: *systemMsg},
+		SystemMsg: mistral.ChatMessage{Role: mistral.RoleSystem, Content: *systemMsg},
 		Temp:      *temp,
 		SafeMode:  *safeMode,
 		Messages:  []mistral.ChatMessage{},

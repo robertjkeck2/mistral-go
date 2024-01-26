@@ -16,7 +16,7 @@ func main() {
 		context.Background(),
 		mistral.ChatCompletionRequest{
 			Model:    "mistral-tiny",
-			Messages: []mistral.ChatMessage{{Role: "user", Content: "What is the best French cheese?"}},
+			Messages: []mistral.ChatMessage{{Role: mistral.RoleUser, Content: "What is the best French cheese?"}},
 		},
 	)
 	if err != nil {

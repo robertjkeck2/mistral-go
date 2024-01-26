@@ -20,7 +20,7 @@ func TestCreateChatCompletion(t *testing.T) {
 	client := mistral.NewMistralClient(os.Getenv("MISTRAL_API_KEY"))
 	completion, err := client.CreateChatCompletion(context.Background(), mistral.ChatCompletionRequest{
 		Model:    "mistral-tiny",
-		Messages: []mistral.ChatMessage{{Role: "user", Content: "Respond to this message with the message: \"Hello, world!\""}},
+		Messages: []mistral.ChatMessage{{Role: mistral.RoleUser, Content: "Respond to this message with the message: \"Hello, world!\""}},
 	})
 	assert.Nil(t, err)
 	assert.NotNil(t, completion)
