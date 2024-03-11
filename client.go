@@ -22,6 +22,11 @@ func NewMistralClient(apiKey string) *MistralClient {
 	return &MistralClient{config: config}
 }
 
+// NewMistralClient creates a new Mistral API client with the given config.
+func NewMistralClientWithConfig(config ClientConfig) *MistralClient {
+	return &MistralClient{config: config}
+}
+
 func isRetryStatusCode(resp *http.Response) bool {
 	return resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode == http.StatusInternalServerError || resp.StatusCode == http.StatusBadGateway || resp.StatusCode == http.StatusServiceUnavailable || resp.StatusCode == http.StatusGatewayTimeout
 }
